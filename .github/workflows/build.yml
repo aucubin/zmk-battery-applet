@@ -14,7 +14,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y $LINUX_DEPS
       - uses: dtolnay/rust-toolchain@master
@@ -29,7 +29,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y $LINUX_DEPS
       - uses: dtolnay/rust-toolchain@master
@@ -37,7 +37,7 @@ jobs:
           toolchain: "1.99"
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --release --locked
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: zmk-battery-applet-linux-x86_64
           path: target/release/zmk-battery-applet
@@ -46,7 +46,7 @@ jobs:
   macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: "1.99"
@@ -64,7 +64,7 @@ jobs:
             target/x86_64-apple-darwin/release/zmk-battery-applet
           scripts/bundle-macos.sh target/universal/zmk-battery-applet target/bundle
           cd target/bundle && ditto -c -k --keepParent "ZMK Battery.app" zmk-battery-applet-macos-universal.zip
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: zmk-battery-applet-macos-universal
           path: target/bundle/zmk-battery-applet-macos-universal.zip
