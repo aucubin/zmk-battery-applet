@@ -37,11 +37,13 @@ jobs:
           toolchain: "1.99"
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --release --locked
+      - run: cp target/release/zmk-battery-applet target/release/zmk-battery-applet-linux-x86_64
       - uses: actions/upload-artifact@v7
         with:
-          name: zmk-battery-applet-linux-x86_64
-          path: target/release/zmk-battery-applet
+          path: target/release/zmk-battery-applet-linux-x86_64
           if-no-files-found: error
+          # Upload the file itself instead of wrapping it in another zip.
+          archive: false
 
   macos:
     runs-on: macos-latest
@@ -66,6 +68,7 @@ jobs:
           cd target/bundle && ditto -c -k --keepParent "ZMK Battery.app" zmk-battery-applet-macos-universal.zip
       - uses: actions/upload-artifact@v7
         with:
-          name: zmk-battery-applet-macos-universal
           path: target/bundle/zmk-battery-applet-macos-universal.zip
           if-no-files-found: error
+          # Upload the file itself instead of wrapping it in another zip.
+          archive: false

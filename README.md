@@ -35,8 +35,9 @@ is on the right, start it with `--central-right`.
 Every push to `main` builds the app in GitHub Actions. Open the latest
 [build run](../../actions/workflows/build.yml) and download the artifact for your platform:
 
-- `zmk-battery-applet-macos-universal`: zipped `ZMK Battery.app` (Apple Silicon and Intel)
-- `zmk-battery-applet-linux-x86_64`: the binary
+- `zmk-battery-applet-macos-universal.zip`: `ZMK Battery.app` (Apple Silicon and Intel)
+- `zmk-battery-applet-linux-x86_64`: the binary. Make it executable after downloading
+  (`chmod +x zmk-battery-applet-linux-x86_64`)
 
 The macOS app is only ad-hoc signed. The first time, right-click → Open (or run
 `xattr -dr com.apple.quarantine "ZMK Battery.app"`).
