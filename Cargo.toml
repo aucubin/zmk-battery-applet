@@ -1,0 +1,23 @@
+[package]
+name = "zmk-battery-applet"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "Menu bar / system tray applet showing the battery level of both halves of a ZMK split keyboard"
+
+[dependencies]
+anyhow = "1.0"
+bluest = "0.6"
+env_logger = "0.11"
+futures-util = "0.3"
+log = "0.4"
+tao = "0.37"
+# Only enables the `log` bridge so bluest's tracing output reaches env_logger.
+tracing = { version = "0.1", default-features = false, features = ["log"] }
+tokio = { version = "1", features = ["rt", "time", "macros", "sync"] }
+tray-icon = "0.26"
+uuid = "1"
+
+[profile.release]
+lto = true
+strip = true
