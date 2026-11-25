@@ -6,7 +6,7 @@ A small menu bar (macOS) / system tray (Linux) applet that shows the battery lev
 ```
 ⌨ L 85% · R 72%
 ```
-[screenshot showing the charging state and menu of the applet](image.png)
+![screenshot showing the charging state and menu of the applet](screenshot.png)
 
 - Detects every connected ZMK split keyboard automatically. With more than one, the label is compact (`85/72 · 90/88`)
   and the menu lists each keyboard.
