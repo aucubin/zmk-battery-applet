@@ -30,9 +30,16 @@ The applet treats any connected device whose Battery Service has two or more Bat
 keyboard. The first characteristic is the central half. The applet assumes the central half is on the left; if yours
 is on the right, start it with `--central-right`.
 
+## Install with Homebrew (macOS)
+
+```sh
+brew install --cask aucubin/tap/zmk-battery-applet
+```
+
 ## Download
 
-Every push to `main` builds the app in GitHub Actions. Open the latest
+Tagged versions are published on the [releases page](../../releases). Every push to `main`
+also builds the app in GitHub Actions: open the latest
 [build run](../../actions/workflows/build.yml) and download the artifact for your platform:
 
 - `zmk-battery-applet-macos-universal.zip`: `ZMK Battery.app` (Apple Silicon and Intel)

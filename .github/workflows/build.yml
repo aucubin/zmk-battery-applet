@@ -3,6 +3,7 @@ name: build
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
 
@@ -72,3 +73,56 @@ jobs:
           if-no-files-found: error
           # Upload the file itself instead of wrapping it in another zip.
           archive: false
+
+  release:
+    # Runs only for version tags (e.g. v0.2.0), after everything else passed.
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [check, linux, macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check tag matches Cargo.toml version
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          CARGO_VERSION="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)"
+          if [[ "$VERSION" != "$CARGO_VERSION" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match Cargo.toml version $CARGO_VERSION"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes \
+            dist/zmk-battery-applet-macos-universal.zip \
+            dist/zmk-battery-applet-linux-x86_64
+
+      - name: Update Homebrew tap
+        env:
+          TAP_TOKEN: ${{ secrets.TAP_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          SHA256="$(sha256sum dist/zmk-battery-applet-macos-universal.zip | cut -d' ' -f1)"
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/aucubin/homebrew-tap.git" tap
+          sed -e "s/@VERSION@/$VERSION/" -e "s/@SHA256@/$SHA256/" \
+            -e '/^# /d' \
+            packaging/homebrew/zmk-battery-applet.rb > tap/Casks/zmk-battery-applet.rb
+          cd tap
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Casks/zmk-battery-applet.rb
+          git commit -m "zmk-battery-applet $VERSION"
+          git push
