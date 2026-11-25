@@ -97,8 +97,25 @@ jobs:
 
       - uses: actions/download-artifact@v8
         with:
-          path: dist
-          merge-multiple: true
+          path: download
+          # The macOS artifact is itself a .zip uploaded with archive: false;
+          # keep it as-is instead of extracting the .app.
+          skip-decompress: true
+
+      # Flatten whatever layout download-artifact produced into dist/.
+      - name: Collect release files
+        run: |
+          find download -type f -print
+          mkdir -p dist
+          for f in zmk-battery-applet-macos-universal.zip zmk-battery-applet-linux-x86_64; do
+            src="$(find download -type f -name "$f" | head -1)"
+            if [[ -z "$src" ]]; then
+              echo "::error::$f not found in downloaded artifacts"
+              exit 1
+            fi
+            cp "$src" "dist/$f"
+          done
+          ls -l dist
 
       - name: Create GitHub release
         env:
